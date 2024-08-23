@@ -189,6 +189,38 @@ def gemma_response(message: list, model=None, temperature=0, max_tokens=500):
         time.sleep(1)
         return gemma_response(message, model, temperature, max_tokens)
 
+from openai import OpenAI
+
+# Modify OpenAI's API key and API base to use vLLM's API server.
+VLLM_API_KEY = "EMPTY"
+VLLM_API_BASE = "http://localhost:8043/v1"
+vllm_client = OpenAI(api_key=VLLM_API_KEY, base_url=VLLM_API_BASE)
+
+
+def vllm_response(message: list, model=None, temperature=0, max_tokens=500):
+    # NOTE: This is a hack to use vLLM's API server for OpenAI's API.
+    if model == "vllm-llama3-70b-instruct":
+        model = "meta-llama/Meta-Llama-3-70B-Instruct"
+    else:
+        raise ValueError(f"Invalid model: {model}")
+
+    assert model in ["meta-llama/Meta-Llama-3-70B-Instruct"]
+    time.sleep(time_gap.get(model, 3))
+
+    try:
+        res = vllm_client.chat.completions.create(
+            model=model,
+            messages=message,
+            temperature=temperature,
+            n=1,
+            max_tokens=max_tokens,
+        )
+        return res.choices[0].message.content
+    except Exception as e:
+        print(e)
+        time.sleep(time_gap.get(model, 3) * 2)
+        return vllm_response(message, model, temperature, max_tokens)    
+
 
 def get_response_method(model):
     response_methods = {
@@ -201,5 +233,6 @@ def get_response_method(model):
         "mistral": mistral_response,
         "gemma": gemma_response,
         "gemini": gemini_response,
+        "vllm": vllm_response,
     }
     return response_methods.get(model.split("-")[0], lambda _: NotImplementedError())
