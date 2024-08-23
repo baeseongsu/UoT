@@ -22,6 +22,8 @@ def run(args):
     if args.naive_run:
         log_file = (f'./logs/{args.task}/{args.guesser_model}_as_guesser/{args.dataset}_{args.temperature}'
                     f'_naive_{"" if args.inform else "un"}inform_EXAMINER{args.examiner_model}'
+                    # NOTE: added
+                    f'{"inform_fixed" if args.inform_first else ""}'
                     f'_{args.task_start_index}-{args.task_end_index}.json')
     else:
         log_file = (f'./logs/{args.task}/{args.guesser_model}_as_guesser/'
@@ -30,6 +32,8 @@ def run(args):
                     f'{args.dataset}_{args.temperature}_lambda{args.reward_lambda}_acc{not args.none_acc_reward}'
                     f'_exp{args.expected_reward_method}_L{args.n_extend_layers}_K{args.n_potential_actions}'
                     f'_PRUN{args.n_pruned_nodes}_EXAMINER{args.examiner_model}'
+                    # NOTE: added
+                    f'{"inform_fixed" if args.inform_first else ""}'
                     f'_{args.task_start_index}-{args.task_end_index}.json')
         root_file = (f'./roots/{args.task}/{args.guesser_model}'
                      f'{f"OS_init{args.open_set_size}_" if args.open_set_size > 0 else ""}'
@@ -100,6 +104,9 @@ def parse_args():
 
     args.add_argument('--none_acc_reward', action='store_true', default=False)
     args.add_argument('--expected_reward_method', type=str, default='avg', choices=['avg', 'max'])
+
+    # NOTE: first inform, then ask (followed by Table 11)
+    args.add_argument('--inform_first', action='store_true', default=False)
 
     args = args.parse_args()
     return args

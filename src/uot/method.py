@@ -14,6 +14,11 @@ def get_examiner_response(task, history):
 def get_guesser_response(task, history, ques_id, node):
     response = get_response_method(task.guesser_model)
 
+    msg = copy.deepcopy(history)
+    # NOTE: (missing part) inform the questioner of the entire probability set at the beginning of interaction
+    if task.inform_first:
+        msg[0]["content"] += task.prompts.inform_prompt.format(item_list_str=", ".join(task.set))
+
     def simplify_rsp(rsp):
         gpt3_response = get_response_method("gpt-4o-mini")
         if len(rsp.split(" ")) > task.expected_action_tokens:
@@ -27,7 +32,7 @@ def get_guesser_response(task, history, ques_id, node):
             return node, target_question.format(target=node.items[0]), False
         else:
             targeting_prompt_free = task.prompts.targeting_prompt_free_FA if task.free_answer else task.prompts.targeting_prompt_free
-            msg = copy.deepcopy(history) + [{"role": "user", "content": targeting_prompt_free}]
+            msg += [{"role": "user", "content": targeting_prompt_free}]
             return node, simplify_rsp(response(msg, model=task.guesser_model)), False
 
     if ques_id < int(task.max_turn*0.6):
@@ -36,7 +41,7 @@ def get_guesser_response(task, history, ques_id, node):
             return n, n.question, True
 
     targeting_prompt_set = task.prompts.targeting_prompt_set_FA if task.free_answer else task.prompts.targeting_prompt_set
-    msg = copy.deepcopy(history) + [{"role": "user", "content": targeting_prompt_set.format(item_list_str=', '.join(node.items))}]
+    msg += [{"role": "user", "content": targeting_prompt_set.format(item_list_str=', '.join(node.items))}]
     return node, simplify_rsp(response(msg, model=task.guesser_model)), False
 
 
@@ -45,6 +50,10 @@ def get_guesser_naive_response(task, history, ques_id):
 
     msg = copy.deepcopy(history)
     prompt = ""
+    # NOTE: (missing part) inform the questioner of the entire probability set at the beginning of interaction
+    if task.inform_first:
+        msg[0]["content"] += task.prompts.inform_prompt.format(item_list_str=", ".join(task.set))
+
     if ques_id > int(task.max_turn*0.7):
         prompt += task.prompts.urge_prompt
         if task.inform:
