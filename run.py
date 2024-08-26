@@ -37,6 +37,7 @@ def run(args):
                     f'_{args.task_start_index}-{args.task_end_index}.json')
         root_file = (f'./roots/{args.task}/{args.guesser_model}'
                      f'{f"OS_init{args.open_set_size}_" if args.open_set_size > 0 else ""}'
+                     f'{"inform_fixed" if args.inform_first else ""}'
                      f'_{args.dataset}_{args.temperature}_root.pickle')
         if os.path.exists(root_file):
             r = open(root_file, 'rb')
