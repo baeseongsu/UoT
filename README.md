@@ -1,131 +1,103 @@
-# Uncertainty of Thought (UoT)
-![framework](pics/Framework.png)
-Uncertainty of Thought (UoT) is a novel algorithm to augment large language models with the ability to actively seek information by asking effective questions.
+# Reproducibility Report
 
-We tested on two categories of models: open-source (Llama-2-70B) and closed-source commercial (other models). The results showed that UoT achieves an average performance improvement of **57.8%** in the rate of successful task completion across multiple LLMs compared with direct prompting, and also improves efficiency (i.e., the number of questions needed to complete the task).
+## Repository Updates
+- [x] Added `examiner` model: `gpt-4o`
+- [x] Updated `guesser` model: `llama3-70b-instruct` (local-vllm)
+- [x] Updated `helper` model: `gpt-4o-mini`
+- [x] Fixed missed `inform` prompt (at conversation start) in Tables 11 and 17 for the `guesser` model
 
-![result](pics/result.jpg)
+## Experimental Scripts
 
-To increase the number of items, we focus on the open-set scenario where the possibility space is unknown rather than predefined. Within this context, the number of items can increase by considering it as an infinite space, due to the lack of constraints. 
+### Model: vllm-llama3-8b-instruct
 
-![result os](pics/results_os.png)
+### Dataset: common (Task: 20q)
 
-- In medical diagnosis and troubleshooting, initial patient or customer symptom descriptions help form an initial set of possibilities. However, in the game of 20 Questions, with limited early information, setting possibilities too soon may lead to wrong directions. Thus, for the first three rounds, DPOS method is used to collect more data. Afterward, the UoT approach **updates the possibilities each round** to improve the questioning strategy.
-- For each dataset, we configure the size of the possibility set for each update round, setting them at 10, 10, 10, 5, 5 and 5, respectively.
-- Compared to DPOS, the Uo'T method significantly improves performance, with enhancements of **54.9%** for GPT-3.5 and **21.1%** for GPT-4.
-
-## Update
-
-- \[20/04/2024\]: Supplement the code and experiment results in the open-set scenarios.
-- \[19/03/2024\]: Supplement the experiment results of `Mistral-Large`, `Gemini-1.0-pro`, and `Claude-3-Opus` models.
-- \[19/03/2024\]: Add the implementation for Gemini
-- \[15/03/2024\]: Add the implementation for Gemma
-- \[07/03/2024\]: Add the implementation for Mistral
-- \[07/03/2024\]: Add the implementation for Claude-3
-
-
-
-## Setup
-
-1. Install `uot` package
 ```bash
-git clone https://github.com/ChorlingLau/Uncertainty-of-Thought.git
-cd Uncertainty-of-Thought
-pip install -r requirements.txt
-pip install -e .
-```
-2. Set up API keys (if require) and store in environment variable
-   
-    | Model                                 | Variable                                       | Source                                        |
-    |---------------------------------------|------------------------------------------------|-----------------------------------------------|
-    | llama-2-70b-chat                      | TOGETHER_API_KEY                               | [Together](https://api.together.xyz/)         |
-    | cohere                                | COHERE_API_KEY                                 | [Cohere](https://cohere.com/)                 |
-    | palm-2 (deprecated) / gemini-1.0-pro  | GOOGLE_API_KEY                                 | [Google AI](https://ai.google.dev/)           |
-    | claude-2 (`_claude-2`)                | CLAUDE2_API_KEY                                | [AIProxy](https://aiproxy.io/)                |
-    | gpt-3.5-turbo / gpt-4                 | OPENAI_API_KEY                                 | [OpenAI](https://openai.com/)                 |
-    | claude-3-\[opus/sonnet\]-20240229     | ANTHROPIC_API_KEY                              | [Anthropic](https://www.anthropic.com/claude) |
-    | mistral-\[small/medium/large\]-latest | MISTRAL_API_KEY                                | [Mistral](https://docs.mistral.ai/)           |
-    | Gemma                                 | -- (See [_Setup for Gemma_](#setup-for-gemma)) | [Gemma](https://ai.google.dev/gemma)          |
-    
-    For example (in CMD):
-    ```bash
-    export OPENAI_API_KEY=[your api key]
-    ```
+# DP (CS) + reminder
+python run.py --guesser_model="vllm-llama3-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform
 
-    To set up other models, see and modify `src/uot/models.py`, and add new choices to parameter `--guesser_model` in `run.py`.
-3. install dataset [here](https://drive.google.com/drive/folders/1QhhsPinylvbgm52zX4VjwiKDxAgPvyVR?usp=sharing) and put files under `src/uot/data/`
+# UoT (CS) + reminder (error)
+python run.py --guesser_model="vllm-llama3-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common
 
+# DP (CS) + informer + reminder
+python run.py --guesser_model="vllm-llama3-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform --inform_first
 
-### Setup for Gemma
+# UoT (CS) + informer + reminder (error)
+python run.py --guesser_model="vllm-llama3-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --inform_first
 
-- Register a Kaggle account and request license for [Gemma](https://www.kaggle.com/models/google/gemma/frameworks/pyTorch/variations/7b) 
-
-- Install dependencies and the model implementation
-```
-pip install -q -U torch immutabledict sentencepiece
-
-cd src/uot
-git clone https://github.com/google/gemma_pytorch.git
-# NOTE: clone the repo to replace the empty directory - gemma_pytorch
+# DP (CS) + informer
+python run.py --guesser_model="vllm-llama3-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform_first
 ```
 
-For further details, follow the [official guidance](https://ai.google.dev/gemma/docs/pytorch_gemma) to prepare the environment and code of Gemma. Related code for downloading models and complete chats are located in `src/uot/model_gemma.py`.
+### Model: vllm-llama3.1-8b-instruct
 
-## Use
-Run experiments via `run.py`, which implements the UoT algorithm, as well as the naive prompting method. Arguments are as follows:
+### Dataset: common (Task: 20q)
 
-- `--guesser_model`: The name of model used to plan and ask questions
+```bash
+# DP (CS) + reminder
+python run.py --guesser_model="vllm-llama3.1-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform
 
-- `--temperature`: Parameter for calling guesser model.
+# UoT (CS) + reminder
+python run.py --guesser_model="vllm-llama3.1-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common
 
-- `--examiner_model`: The name of model used to provide environment feedback. Fixed to be `gpt-4` currently.
+# DP (CS) + informer + reminder
+python run.py --guesser_model="vllm-llama3.1-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform --inform_first
 
-- `--task` and `--dataset`: Select the corresponding task name and dataset according to the table below.
+# UoT (CS) + informer + reminder
+python run.py --guesser_model="vllm-llama3.1-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --inform_first
 
-    | Description       | task  | dataset               |
-    |-------------------|-------|-----------------------|
-    | 20 Question Game  | `20q` | `bigbench` / `common` |
-    | Medical Diagnosis | `md`  | `DX` / `MedDG`        |
-    | Troubleshooting   | `tb`  | `FiaDial`             |
-
-- `--task_start_index` and `--task_end_index`: Conduct experiment with [start, end) targets in selected dataset. (Default: entire dataset)
-
-- `--open_set_size`: Size of the possibility set after updating for open-set setting. (Default: -1, unable open-set setting)
-
-- `--size_to_renew`: When the size of the possibility set is less than this value, update the possibility set to the size of `--open_set_size`. (Consider only when `--open_set_size` > 0) 
-
-- `--n_pre_ask`: Number of DPOS rounds at the beginning. (Consider only when `--open_set_size` > 0 and self-report disable) 
-
-- `--naive_run`: If True, run with naive prompting method, otherwise UoT.
-
-- `--inform`: If True, the guesser is given answer set. (Consider only when `--naive_run` is True) 
-
-- `--reward_lambda`: Parameter $\lambda$ in uncertainty-based reward setting.
-
-- `--n_extend_layers`: Parameter $J$ -- Number of simulation steps.
-
-- `--n_potential_actions`: Parameter $N$ -- Number of candidate actions generated.
-
-- `--n_pruned_nodes`: Max number of remaining nodes in each step.
-
-  - If not prun, set it to 0;
-  - If prun and remain exact number of nodes, set it > 0 (e.g. `10`: Each step has a maximum of 10 nodes, $M$ or $U$, remaining);
-  - If prun and remain a certain proportion of nodes, set it < 0 (e.g. `-0.5`: The remaining 50% of nodes in each step).
-
-- `--expected_action_tokens`: Max tokens not to call `gpt-3.5-turbo` model simplifying the guesser's selected action.
-
-- `--expected_target_tokens`: Max tokens for each target name. Used to predict and set the `max_tokens` when calling guesser model.
-
-## Implement Note
-
-- The root of UoT (stored in `roots/`) with the same setting will be loaded by default. And broken root file do cause error. Thus, if some errors occur when rerunning an experiment, you can try deleting the related root file.
-
-## Citation
-Please cite the associated paper and star this repository if you find UoT interesting or useful in your work. Your support is greatly appreciated! Don't hesitate to open an issue if you have any questions.
-```bibtex
-@misc{2402.03271,
-Author = {Zhiyuan Hu and Chumin Liu and Xidong Feng and Yilun Zhao and See-Kiong Ng and Anh Tuan Luu and Junxian He and Pang Wei Koh and Bryan Hooi},
-Title = {Uncertainty of Thoughts: Uncertainty-Aware Planning Enhances Information Seeking in Large Language Models},
-Year = {2024}
+# DP (CS) + informer
+python run.py --guesser_model="vllm-llama3.1-8b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform_first
 ```
 
+
+### Model: vllm-llama3-70b-instruct
+
+#### Dataset: common (Task: 20q)
+
+```bash
+# DP (CS) + reminder
+python run.py --guesser_model="vllm-llama3-70b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform
+
+# UoT (CS) + reminder
+python run.py --guesser_model="vllm-llama3-70b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common
+
+# DP (CS) + informer + reminder
+python run.py --guesser_model="vllm-llama3-70b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform --inform_first
+
+# UoT (CS) + informer + reminder
+python run.py --guesser_model="vllm-llama3-70b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --inform_first
+
+# DP (CS) + informer
+python run.py --guesser_model="vllm-llama3-70b-instruct" --examiner_model="gpt-4o" --task=20q --dataset=common --naive_run --inform_first
+```
+
+## Reproduced Results
+
+The table below summarizes the results obtained from running the scripts mentioned above:
+
+| Model       | Method                        | Task | Dataset | SR↑    | MSC↓    | MCL↓    |
+|-------------|-------------------------------|------|---------|--------|---------|---------|
+| llama3-8b   | DP (CS) + reminder            | 20q  | common  | 0.0000 | 0.0000  | 20.0000 | [O]
+| llama3-8b   | DP (CS) + informer            | 20q  | common  | 0.2072 | 14.7391 | 18.9099 | [O]
+| llama3-8b   | DP (CS) + informer + reminder | 20q  | common  | 0.1171 | 13.0769 | 19.1892 | [O]
+| llama3-8b   | UoT (CS) + reminder           | 20q  | common  | 0.0000 | 0.0000  | 0.0000  | [error]
+| llama3-8b   | UoT (CS) + informer + reminder| 20q  | common  | 0.0000 | 0.0000  | 0.0000  | [error]
+
+| llama3.1-8b | DP (CS) + reminder            | 20q  | common  | 0.2883 | 13.0938 | 18.0090 | [O]
+| llama3.1-8b | DP (CS) + informer            | 20q  | common  | 0.5495 | 13.4918 | 16.4234 | [O]
+| llama3.1-8b | DP (CS) + informer + reminder | 20q  | common  | 0.4685 | 12.8077 | 16.6306 | [O]
+| llama3.1-8b | UoT (CS) + reminder           | 20q  | common  | 0.3243 | 10.1667 | 16.8108 | [O]
+| llama3.1-8b | UoT (CS) + informer + reminder| 20q  | common  | 0.5946 | 11.1364 | 14.7297 | [O]
+
+| llama3-70b  | DP (CS) + reminder            | 20q  | common  | 0.6486 | 13.9167 | 16.0541 | [O]
+| llama3-70b  | DP (CS) + informer            | 20q  | common  | 0.8378 | 10.6022 | 12.1261 | [O]
+| llama3-70b  | DP (CS) + informer + reminder | 20q  | common  | 0.8468 | 10.9787 | 12.3604 | [O]
+| llama3-70b  | UoT (CS) + reminder           | 20q  | common  | 0.3874 | 9.6512  | 15.9910 | [O]
+| llama3-70b  | UoT (CS) + informer + reminder| 20q  | common  | 0.8198 | 9.6154  | 11.4865 | [O]
+
+### Notes:
+- SR↑: Success Rate (higher is better)
+- MSC↓: Mean Successful Conversation length (lower is better)
+- MCL↓: Mean Conversation Length (lower is better)
+- Methods with "informer" use the `--inform_first` flag, which significantly improved performance in most cases.

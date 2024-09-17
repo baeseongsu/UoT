@@ -201,10 +201,22 @@ def vllm_response(message: list, model=None, temperature=0, max_tokens=500):
     # NOTE: This is a hack to use vLLM's API server for OpenAI's API.
     if model == "vllm-llama3-70b-instruct":
         model = "meta-llama/Meta-Llama-3-70B-Instruct"
+    elif model == "vllm-llama3-8b-instruct":
+        model = "meta-llama/Meta-Llama-3-8B-Instruct"
+        VLLM_API_BASE = "http://localhost:8043/v1"
+        vllm_client = OpenAI(api_key=VLLM_API_KEY, base_url=VLLM_API_BASE)
+    elif model == "vllm-llama3.1-8b-instruct":
+        model = "meta-llama/Meta-Llama-3.1-8B-Instruct"
+        VLLM_API_BASE = "http://localhost:8044/v1"
+        vllm_client = OpenAI(api_key=VLLM_API_KEY, base_url=VLLM_API_BASE)
     else:
         raise ValueError(f"Invalid model: {model}")
 
-    assert model in ["meta-llama/Meta-Llama-3-70B-Instruct"]
+    assert model in [
+        "meta-llama/Meta-Llama-3-70B-Instruct",
+        "meta-llama/Meta-Llama-3-8B-Instruct",
+        "meta-llama/Meta-Llama-3.1-8B-Instruct",
+    ]
     time.sleep(time_gap.get(model, 3))
 
     try:

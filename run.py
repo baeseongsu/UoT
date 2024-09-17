@@ -75,7 +75,9 @@ def parse_args():
                                '_claude-2', 'claude-3-opus-20240229', 'claude-3-sonnet-20240229',
                                'palm-2', 'cohere', 'llama-2-70b-chat',
                                'mistral-small-latest', 'mistral-medium-latest', 'mistral-large-latest',
-                               'gemma', 'gemini-1.0-pro', 'vllm-llama3-70b-instruct'])
+                               'gemma', 'gemini-1.0-pro', 
+                               'vllm-llama3-8b-instruct', 'vllm-llama3-70b-instruct',
+                               'vllm-llama3.1-8b-instruct'])
     args.add_argument('--temperature', type=float, default=0)
     args.add_argument('--examiner_model', type=str, default='gpt-4', choices=['gpt-4', 'gpt-4o'])
 

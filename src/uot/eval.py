@@ -4,7 +4,7 @@ import json
 def evaluate_performance(file, task):
     cnt = success = 0
     length = success_length = 0
-    with (open(file, 'r') as f):
+    with open(file, 'r') as f:
         data = json.load(f)
     for i in data:
         cnt += 1
@@ -17,6 +17,9 @@ def evaluate_performance(file, task):
 
     print('Dialogue Count:', cnt)
     print('Success Rate:', success / cnt)
-    print('Mean Conversation Length in Successful Cases:', success_length / success)
+    try:
+        print('Mean Conversation Length in Successful Cases:', success_length / success)
+    except:
+        print('Mean Conversation Length in Successful Cases:', 0 / 1)
     print('Mean Conversation Length:', length / cnt)
 
