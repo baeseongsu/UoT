@@ -1,5 +1,7 @@
 # Reproducibility Report
 
+**Conclusion**: I reproduced the results for `llama3-8b`, `llama3.1-8b`, and `llama3-70b` using the provided experimental scripts, but my findings are inconsistent with the paper, especially in the closed setting (CS). I investigated the cause of this inconsistency and found that the position of the initial inform prompt in the conversation significantly affects model performance. Specifically, in the original repository, DP(CS) underperforms due to not using the initial inform prompt, while UoT(CS) benefits from it. This leads to an unfair comparison, underestimating DP(CS)'s performance. To ensure fairness, I applied the initial inform prompt to both DP(CS) and UoT(CS) in my experiments, where DP(CS) outperformed UoT(CS), despite using a simpler prompting strategy. As a result, I question the validity of the paper’s reported performance, including the entire experimental results table, due to this discrepancy.
+
 ## Repository Updates
 - [x] Added `examiner` model: `gpt-4o`
 - [x] Updated `guesser` model: `llama3-70b-instruct` (local-vllm)
