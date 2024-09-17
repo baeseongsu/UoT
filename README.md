@@ -83,13 +83,11 @@ The table below summarizes the results obtained from running the scripts mention
 | llama3-8b   | DP (CS) + informer + reminder | 20q  | common  | 0.1171 | 13.0769 | 19.1892 | [O]
 | llama3-8b   | UoT (CS) + reminder           | 20q  | common  | 0.0000 | 0.0000  | 0.0000  | [error]
 | llama3-8b   | UoT (CS) + informer + reminder| 20q  | common  | 0.0000 | 0.0000  | 0.0000  | [error]
-
 | llama3.1-8b | DP (CS) + reminder            | 20q  | common  | 0.2883 | 13.0938 | 18.0090 | [O]
 | llama3.1-8b | DP (CS) + informer            | 20q  | common  | 0.5495 | 13.4918 | 16.4234 | [O]
 | llama3.1-8b | DP (CS) + informer + reminder | 20q  | common  | 0.4685 | 12.8077 | 16.6306 | [O]
 | llama3.1-8b | UoT (CS) + reminder           | 20q  | common  | 0.3243 | 10.1667 | 16.8108 | [O]
 | llama3.1-8b | UoT (CS) + informer + reminder| 20q  | common  | 0.5946 | 11.1364 | 14.7297 | [O]
-
 | llama3-70b  | DP (CS) + reminder            | 20q  | common  | 0.6486 | 13.9167 | 16.0541 | [O]
 | llama3-70b  | DP (CS) + informer            | 20q  | common  | 0.8378 | 10.6022 | 12.1261 | [O]
 | llama3-70b  | DP (CS) + informer + reminder | 20q  | common  | 0.8468 | 10.9787 | 12.3604 | [O]
